@@ -35,7 +35,7 @@ DrawGate <- function(fr, channels){
   flowDensity::plotDens(fr, channels = channels, cex = 3)
 
   # Extract points of drawn gate
-  pts <- locator(type = "l", lwd = 2)
+  pts <- locator(type = "o", lwd = 2)
 
   if (length(pts$x) < 3) stop("A minimum of 3 points is required to construct a polygon gate.")
   lines(x = pts$x[c(1, length(pts$x))], y = pts$y[c(1, length(pts$x))], lwd = 2)
