@@ -17,7 +17,7 @@ DrawGate <- function(fr, channels){
 
   # Check that length(channels) %in% c(1,2)
   if(!length(channels) == 2){
-    stop("Please supply either 2 fluorescent channels for gating")
+    stop("Please supply 2 fluorescent channels for gating")
   }
 
   # Extract data for plotting and gating
