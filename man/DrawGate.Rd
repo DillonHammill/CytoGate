@@ -4,13 +4,15 @@
 \alias{DrawGate}
 \title{Draw 2D Gates on Plots of Flow Cytometry Data}
 \usage{
-DrawGate(fr, channels)
+DrawGate(fr, channels, ...)
 }
 \arguments{
 \item{fr}{a \code{flowFrame} object containing the flow cytometry data for plotting and gating.}
 
 \item{channels}{a vector of length 2 indicating the fluorescent channels to be used to construct 2D plot
 and \code{polygonGate}.}
+
+\item{...}{additional arguments for plotDens.}
 }
 \value{
 a \code{dataframe} object containing the vertices of the polygon gate.

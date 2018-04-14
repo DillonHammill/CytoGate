@@ -5,6 +5,7 @@
 #' @param fr a \code{flowFrame} object containing the flow cytometry data for plotting and gating.
 #' @param channels a vector of length 2 indicating the fluorescent channels to be used to construct 2D plot
 #' and \code{polygonGate}.
+#' @param ... additional arguments for plotDens.
 #'
 #' @return a \code{dataframe} object containing the vertices of the polygon gate.
 #'
@@ -13,7 +14,7 @@
 #' @export
 #'
 #' @author Dillon Hammill (Dillon.Hammill@anu.edu.au)
-DrawGate <- function(fr, channels){
+DrawGate <- function(fr, channels, ...){
 
   # Check that length(channels) %in% c(1,2)
   if(!length(channels) == 2){
@@ -32,7 +33,7 @@ DrawGate <- function(fr, channels){
   # Plot the data for gating use flowDensity::plotDens - locator() only works for base graphics
   cat("Draw 2D polygon gate around population. \n")
 
-  flowDensity::plotDens(fr, channels = channels, cex = 3)
+  flowDensity::plotDens(fr, channels = channels, cex = 3, ...)
 
   # Extract points of drawn gate
   pts <- locator(type = "o", lwd = 2, pch = 16)
