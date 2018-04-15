@@ -33,6 +33,7 @@ DrawGate <- function(fr, channels, adjust = 1, ...){
     
     dens <- density(exprs(fr)[,channels], adjust = adjust)
     plot(dens, main = fr@description$GUID, xlab = channels)
+
     with(dens, polygon(x = c(0,dens$x, max(dens$x)), y = c(0, dens$y, 0), col = "blue"))
     
     pts <- locator(type = "o", lwd = 2, pch = 16)
