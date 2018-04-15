@@ -1,7 +1,6 @@
 library(openCyto)
 library(flowDensity)
 
-
 DrawGate <- function(fr, channels, adjust = 1, ...){
   
   # Check that length(channels) %in% c(1,2)
@@ -20,30 +19,32 @@ DrawGate <- function(fr, channels, adjust = 1, ...){
     
     dens <- density(exprs(fr)[,channels], adjust = adjust)
     plot(dens, main = " ")
+    with(dens, polygon(x = c(0,dens$x, max(dens$x)), y = c(0, dens$y, 0), col = "blue"))
     
     pts <- locator(type = "o", lwd = 2, pch = 16)
     abline(v = pts$x, col = "red")
     
     pts <- matrix(pts$x, ncol = 1, dimnames = list(c("min","max"),channels))
-  
+    
   } else if(length(channels) == 2){
-  # Plot the data for gating use flowDensity::plotDens - locator() only works for base graphics
-  cat("Draw 2D polygon gate around population. \n")
-  
-  flowDensity::plotDens(fr, channels = channels, cex = 3, ...)
-  
-  # Extract points of drawn gate
-  pts <- locator(type = "o", lwd = 2, pch = 16)
-  
-  if (length(pts$x) < 3) stop("A minimum of 3 points is required to construct a polygon gate.")
-  lines(x = pts$x[c(1, length(pts$x))], y = pts$y[c(1, length(pts$x))], lwd = 2)
-  
-  pts <- as.data.frame(pts)
-  colnames(pts) <- channels
+    # Plot the data for gating use flowDensity::plotDens - locator() only works for base graphics
+    cat("Draw 2D polygon gate around population. \n")
+    
+    flowDensity::plotDens(fr, channels = channels, cex = 3, ...)
+    
+    # Extract points of drawn gate
+    pts <- locator(type = "o", lwd = 2, pch = 16)
+    
+    if (length(pts$x) < 3) stop("A minimum of 3 points is required to construct a polygon gate.")
+    lines(x = pts$x[c(1, length(pts$x))], y = pts$y[c(1, length(pts$x))], lwd = 2)
+    
+    pts <- as.data.frame(pts)
+    colnames(pts) <- channels
   }
   
   return(pts)
 }
+
 
 
 gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, min = NULL, max = NULL, ...){
@@ -63,10 +64,10 @@ gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, mi
   
   if(length(channels) == 1){
     rectangleGate(.gate = pts)
-  
+    
   }else if (length(channels) == 2){
-  
-  # Construct polygonGate
+    
+    # Construct polygonGate
     polygonGate(.gate = pts)
   }
 }
@@ -82,7 +83,7 @@ trans <- estimateLogicle(gs[[1]], colnames(fs)[-c(1,14)])
 gs <- transform(gs,trans)
 
 template <- add_pop(
-  gs, alias = "Cells", pop = "+", parent = "root", dims = "FSC-A", gating_method = "DrawGate",
+  gs, alias = "Cells", pop = "+", parent = "root", dims = "SSC-A", gating_method = "DrawGate",
   collapseDataForGating = TRUE, groupBy = 2, gating_args = "subSample=20000"
 )
 Rm("Cells",gs)

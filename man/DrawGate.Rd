@@ -4,13 +4,15 @@
 \alias{DrawGate}
 \title{Draw 2D Gates on Plots of Flow Cytometry Data}
 \usage{
-DrawGate(fr, channels, ...)
+DrawGate(fr, channels, adjust = 1, ...)
 }
 \arguments{
 \item{fr}{a \code{flowFrame} object containing the flow cytometry data for plotting and gating.}
 
 \item{channels}{a vector of length 2 indicating the fluorescent channels to be used to construct 2D plot
 and \code{polygonGate}.}
+
+\item{adjust}{numeric passed to \code{density} for 1D gates to adjust smoothing, \code{adjust = 1} by default.}
 
 \item{...}{additional arguments for plotDens.}
 }
