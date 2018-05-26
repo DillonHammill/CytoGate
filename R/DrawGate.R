@@ -82,7 +82,7 @@ DrawGate <- function(fr, channels, gate_type, ...){
     # Extract gate coordinates
     pts <- locator(type = "p", lwd = 2, pch = 16)
     
-    if (!length(pts$x) %% 4 == 0) stop("Exactly 4 points are required to construct each rectangle gate - selected points not divisible by 4.")
+    if (!length(pts$x) %% 4 == 0) stop("Number of selected points should be 4n where n indicates the number of rectangle gate(s).")
     
     pts <- data.frame(pts)
     colnames(pts) <- channels
@@ -123,7 +123,7 @@ DrawGate <- function(fr, channels, gate_type, ...){
     # Extract gate coordinates
     pts <- locator(type = "p", lwd = 2, pch = 16)
     
-    if (!length(pts$x) %% 2 == 0) stop("Exactly 2 points are required to construct each interval gate - selected points not divisible by 2.")
+    if (!length(pts$x) %% 2 == 0) stop("Number of selected points should be 2n where n indicates the number of interval gate(s).")
     
     pts <- data.frame(pts)
     colnames(pts) <- c(channels,"Density")
