@@ -68,7 +68,7 @@ DrawGate <- function(fr, channels, gate_type, ...){
     pts <- as.data.frame(pts)
     colnames(pts) <- channels
     
-    gates <- rectangleGate(.gate = pts)
+    gates <- polygonGate(.gate = pts)
     
   }else if(gate_type == "rectangle"){
     
