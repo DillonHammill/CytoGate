@@ -5,7 +5,8 @@
 \title{DrawGate plugin for openCyto}
 \usage{
 gate_draw(fr, pp_res, channels, filterId = "", gate_range = NULL,
-  min = NULL, max = NULL, ...)
+  min = NULL, max = NULL, gate_type = c("polygon", "rectangle",
+  "interval", "threshold", "quadrant"), ...)
 }
 \arguments{
 \item{fr}{a \code{flowFrame} object containing the flow cytometry data for gating.}
@@ -16,11 +17,14 @@ gate_draw(fr, pp_res, channels, filterId = "", gate_range = NULL,
 
 \item{filterId}{gate name assigned by openCyto from the \code{gatingTemplate}.}
 
-\item{gate_range}{range in which gate should be constructed (only needed for autogating functions)}
+\item{gate_range}{range in which gate should be constructed (only needed for autogating functions).}
 
 \item{min}{argument passed to \code{truncate_flowFrame} to restrict data to values > \code{min}.}
 
 \item{max}{argument passed to \code{truncate_flowFrame} to restrict data to values < \code{max}.}
+
+\item{gate_type}{type of gate to be constructed, supported types include 
+\code{c("polygon", "rectangle", "interval", "threshold", "quadrant")}.}
 
 \item{...}{additional arguments passsed to \code{DrawGate}.}
 }
