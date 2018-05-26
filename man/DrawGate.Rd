@@ -2,25 +2,31 @@
 % Please edit documentation in R/DrawGate.R
 \name{DrawGate}
 \alias{DrawGate}
-\title{Draw 2D Gates on Plots of Flow Cytometry Data}
+\title{Interactive Gate Drawing for Flow Cytometry Data.}
 \usage{
-DrawGate(fr, channels, adjust = 1, ...)
+DrawGate(fr, channels, gate_type, ...)
 }
 \arguments{
 \item{fr}{a \code{flowFrame} object containing the flow cytometry data for plotting and gating.}
 
-\item{channels}{a vector of length 2 indicating the fluorescent channels to be used to construct 2D plot
-and \code{polygonGate}.}
+\item{channels}{a vector indicating the fluorescent channel(s) to be used for gating. If a single channel is supplied, a histogram of
+of the kernel density will be constructed.}
 
-\item{adjust}{numeric passed to \code{density} for 1D gates to adjust smoothing, \code{adjust = 1} by default.}
+\item{gate_type}{a character string of length 1 indicating the type of gate to be constructed. Supported gates are \code{"polygon"},
+\code{"rectangle"}, \code{"interval"}, \code{"threshold"} and \code{"quadrant"}.}
 
 \item{...}{additional arguments for plotDens.}
 }
 \value{
-a \code{dataframe} object containing the vertices of the polygon gate.
+a \code{dataframe} object containing the coordinates required to construct the gate.
 }
 \description{
-\code{DrawGate} facilitates manual drawing of polygon gates onto flow cytometry plots.
+\code{DrawGate} implements an interactive manual gating routine for flow cytometry data. Users can easily
+select gate coordinates on plots of flow cytometry data using a mouse click. Based on the user input, \code{DrawGate}
+can construct many different types of gates, including \code{polygon}, \code{rectangle}, \code{interval}, \code{threshold},
+and \code{quadrant}. The type of gate to be constructed must be supplied as the \code{gate_type} argument
+which by default is set to a \code{polygonGate}. Each \code{gate_type} has specific gating instructions which are printed to
+the console during gating. The selection of multiple gates is supported for rectangle and interval gate types.
 }
 \author{
 Dillon Hammill (Dillon.Hammill@anu.edu.au)
