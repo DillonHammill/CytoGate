@@ -106,8 +106,6 @@ DrawGate <- function(fr, channels, gate_type, ...){
       rectangleGate(pts)
     })
     
-    print(gates)
-    
     gates <- filters(gates)
     
   }else if(gate_type == "interval"){
