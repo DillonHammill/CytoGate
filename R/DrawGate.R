@@ -2,7 +2,7 @@
 #'
 #' \code{DrawGate} implements an interactive manual gating routine for flow cytometry data. Users can easily
 #' select gate coordinates on plots of flow cytometry data using a mouse click. Based on the user input, \code{DrawGate}
-#' can construct many different types of gates, including \code{polygon}, \code{rectangle}, \code{interval}, \code{threshold},
+#' can construct many different types of gates, including \code{polygon}, \code{rectangle}, \code{interval}, \code{threshold}, \code{ellipse},
 #' and \code{quadrant}. The type of gate to be constructed must be supplied as the \code{gate_type} argument
 #' which by default is set to a \code{polygonGate}. Each \code{gate_type} has specific gating instructions which are printed to
 #' the console during gating. The selection of multiple gates is supported for rectangle and interval gate types.
@@ -11,7 +11,7 @@
 #' @param channels a vector indicating the fluorescent channel(s) to be used for gating. If a single channel is supplied, a histogram of
 #' of the kernel density will be constructed.
 #' @param gate_type a character string of length 1 indicating the type of gate to be constructed. Supported gates are \code{"polygon"},
-#' \code{"rectangle"}, \code{"interval"}, \code{"threshold"} and \code{"quadrant"}.
+#' \code{"rectangle"}, \code{"interval"}, \code{"threshold"}, \code{"ellipse"} and \code{"quadrant"}.
 #' @param ... additional arguments for plotDens.
 #'
 #' @return a \code{dataframe} object containing the coordinates required to construct the gate.
@@ -167,7 +167,107 @@ DrawGate <- function(fr, channels, gate_type, ...){
     colnames(pts) <- channels
     
     gates <- rectangleGate(.gate = pts)
+  
+  }else if(gate_type == "ellipse"){
     
+    # Construct ellipse gate(s) 
+    
+    cat("Select at 4 points per gate to define limits of the ellipse(s). \n")
+    
+    # Create plot for gating
+    flowDensity::plotDens(fr, channels = channels, cex = 3, ...)
+    
+    # Extract gate coordinates
+    pts <- locator(type = "p", lwd = 2, pch = 16)
+    if (!length(pts$x) %% 4 == 0) stop("Number of selected points should be 4n where n indicates the number of ellipsoid gate(s).")
+    pts <- data.frame(pts)
+    
+    sp.pts <- split(pts, rep(1:(nrow(pts)/4),each=4))
+    
+    # Find which points are on major axis
+    mj.pts <- list()
+    for(i in 1:length(sp.pts)){
+      dst <- as.matrix(stats::dist(sp.pts[[i]]))
+      mj.pts[[i]] <- sp.pts[[i]][which(dst == max(dst), arr.ind = TRUE)[1,],]
+    }
+    
+    # Find which points are on minor axis
+    mr.pts <- list()
+    for(i in 1:length(sp.pts)){
+      mr.pts[[i]] <- sp.pts[[i]][!sp.pts[[i]]$x %in% mj.pts[[i]]$x & !sp.pts[[i]]$y %in% mj.pts[[i]]$y,]
+    }
+    
+    # Find center of the major axis
+    centers <- list()
+    for(i in 1:length(sp.pts)){
+      coords <- mj.pts[[i]]
+      
+      # Find the center
+      centers[[i]] <- c((sum(coords$x)/nrow(coords)), (sum(coords$y)/nrow(coords)))
+      points(x = centers[[i]][1], y = centers[[i]][2], col = "red", pch = 16)
+    }
+    
+    # Find major point which lies above center
+    max.pt <- list()
+    for(i in 1:length(sp.pts)){
+      max.pt[[i]] <- mj.pts[[i]][mj.pts[[i]]$y > centers[[i]][2] ,]
+    } 
+    
+    # Radius of the major axis
+    a <- list()
+    for(i in 1:length(sp.pts)){
+      a[[i]] <- stats::dist(mj.pts[[i]])/2
+    }
+    
+    # Radius of the minor axis
+    b <- list()
+    for(i in 1:length(sp.pts)){
+      b[[i]] <- stats::dist(mr.pts[[i]])/2
+    }
+    
+    # Angle between horizontal line through center and max.pt
+    angles <- list()
+    for(i in 1:length(sp.pts)){
+      
+      # angle < pi/2
+      if(max.pt[[i]][1] > centers[[i]][1]){
+        mj.pt.ct <- cbind(max.pt[[i]][1],centers[[i]][2])
+        colnames(mj.pt.ct) <- c("x","y")
+        adj <- stats::dist(rbind(centers[[i]],mj.pt.ct))
+        angles[[i]] <- acos(adj/a[[i]])
+      }else if(max.pt[[i]][1] < centers[[i]][1]){     # angle > pi/2
+        mj.pt.ct <- cbind(centers[[i]][1], max.pt[[i]][2])
+        colnames(mj.pt.ct) <- c("x","y")
+        opp <- stats::dist(as.matrix(rbind(max.pt[[i]],mj.pt.ct)))
+        angles[[i]] <- pi/2 + asin(opp/a[[i]])
+      }
+    }
+    
+    cvms <- list()
+    for(i in 1:length(sp.pts)){
+      
+      # Calculate co-variance matrix
+      cinv <- matrix(c(0,0,0,0), nrow = 2, ncol = 2)
+      cinv[1,1] <- (((cos(angles[[i]])*cos(angles[[i]]))/(a[[i]]*a[[i]])) + ((sin(angles[[i]])*sin(angles[[i]]))/(b[[i]]*b[[i]])))
+      cinv[2,1] <- sin(angles[[i]])*cos(angles[[i]])*((1/(a[[i]]*a[[i]]))-(1/(b[[i]]*b[[i]])))
+      cinv[1,2] <- cinv[2,1]
+      cinv[2,2] <- (((sin(angles[[i]])*sin(angles[[i]]))/(a[[i]]*a[[i]])) + ((cos(angles[[i]])*cos(angles[[i]]))/(b[[i]]*b[[i]])))
+      
+      cvm <- solve(cinv)
+      dimnames(cvm) <- list(channels,channels)
+      cvms[[i]] <- cvm
+      
+      DescTools::DrawEllipse(x = centers[[i]][1], y = centers[[i]][2], radius.x = a[[i]], radius.y = b[[i]], rot = angles[[i]], border = "red", lwd = 2)
+    }
+    
+    gates <- list()
+    for(i in 1:length(sp.pts)){
+      gates[[i]] <- ellipsoidGate(.gate = cvms[[i]], mean = centers[[i]])
+    }
+    
+    gates <- filters(gates)
+    
+      
   }else if(gate_type == "quadrant"){
     
     # Construct quadrant gates
@@ -226,7 +326,7 @@ DrawGate <- function(fr, channels, gate_type, ...){
 #' @param filterId gate name assigned by openCyto from the \code{gatingTemplate}.
 #' @param gate_range range in which gate should be constructed (only needed for autogating functions).
 #' @param gate_type type of gate to be constructed, supported types include 
-#' \code{c("polygon", "rectangle", "interval", "threshold", "quadrant")}.
+#' \code{c("polygon", "rectangle", "interval", "threshold", "ellipse", "quadrant")}.
 #' @param min argument passed to \code{truncate_flowFrame} to restrict data to values > \code{min}.
 #' @param max argument passed to \code{truncate_flowFrame} to restrict data to values < \code{max}.
 #' @param ... additional arguments passsed to \code{DrawGate}.
@@ -250,7 +350,7 @@ DrawGate <- function(fr, channels, gate_type, ...){
 #' gs <- GatingSet(fs) # add flowSet to GatingSet
 #' 
 #' template <- add_pop(
-#' gs, alias = "Lymphocytes", pop = "+", parent = "root", dims = "FSC-A,SSC-A", gating_method = "DrawGate",
+#' gs, alias = "Lymphocytes", pop = "+", parent = "root", dims = "FSC-A,SSC-A", gating_method = "DrawGate", gaating_args = "gate_type='ellipse'",
 #' gating_args = "subSample=10000", collapseDataForGating = TRUE, groupBy = 2
 #' )
 #' 
@@ -259,7 +359,7 @@ DrawGate <- function(fr, channels, gate_type, ...){
 #' ggcyto(gs[[1]], subset = "root", aes(x = "FSC-A",y = "SSC-A")) + geom_hex(bins = 100) + geom_stats()
 #' 
 #' }
-gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, min = NULL, max = NULL, gate_type = c("polygon", "rectangle", "interval", "threshold", "quadrant"), ...){
+gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, min = NULL, max = NULL, gate_type = c("polygon", "rectangle", "interval", "threshold", "ellipse", "quadrant"), ...){
   
   gate_type <- match.arg(gate_type)
   

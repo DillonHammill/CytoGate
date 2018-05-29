@@ -6,7 +6,7 @@
 \usage{
 gate_draw(fr, pp_res, channels, filterId = "", gate_range = NULL,
   min = NULL, max = NULL, gate_type = c("polygon", "rectangle",
-  "interval", "threshold", "quadrant"), ...)
+  "interval", "threshold", "ellipse", "quadrant"), ...)
 }
 \arguments{
 \item{fr}{a \code{flowFrame} object containing the flow cytometry data for gating.}
@@ -24,7 +24,7 @@ gate_draw(fr, pp_res, channels, filterId = "", gate_range = NULL,
 \item{max}{argument passed to \code{truncate_flowFrame} to restrict data to values < \code{max}.}
 
 \item{gate_type}{type of gate to be constructed, supported types include 
-\code{c("polygon", "rectangle", "interval", "threshold", "quadrant")}.}
+\code{c("polygon", "rectangle", "interval", "threshold", "ellipse", "quadrant")}.}
 
 \item{...}{additional arguments passsed to \code{DrawGate}.}
 }
@@ -47,7 +47,7 @@ fs <- read.flowSet(path = "Samples", pattern = ".fcs") # load in .fcs files
 gs <- GatingSet(fs) # add flowSet to GatingSet
 
 template <- add_pop(
-gs, alias = "Lymphocytes", pop = "+", parent = "root", dims = "FSC-A,SSC-A", gating_method = "DrawGate",
+gs, alias = "Lymphocytes", pop = "+", parent = "root", dims = "FSC-A,SSC-A", gating_method = "DrawGate", gaating_args = "gate_type='ellipse'",
 gating_args = "subSample=10000", collapseDataForGating = TRUE, groupBy = 2
 )
 
