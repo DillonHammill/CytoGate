@@ -147,12 +147,17 @@ DrawGate <- function(fr, channels, gate_type, N = 1, ...){
     }
     
     # Extract gate coordinates
-    coords <- locator(n=1, type = "o", lwd = 2, pch = 16)
+    coords <- locator(n=1, type = "o", lwd = 2, pch = 16, col = "red")
     
-    abline(v = coords$x, lwd = 2, col = "red")
-    
-    pts <- data.frame(x = c(coords$x,Inf))
-    colnames(pts) <- channels[1]
+    if(length(channels) == 1){
+      pts <- data.frame(x = c(coords$x,Inf))
+      colnames(pts) <- channels[1]
+      abline(v = coords$x, lwd = 2, col = "red")
+    }else if(length(channels) == 2){
+      pts <- data.frame(x = c(coords$x,Inf), y = c(coords$y,Inf))
+      colnames(pts) <- channels
+      rect(xleft = min(coords$x), ybottom = min(coords$y), xright = max(exprs(fr)[,channels[1]]), ytop = max(exprs(fr)[, channels[2]]), border = "red", lwd = 2)
+    }
     
     gates <- rectangleGate(.gate = pts)
     
@@ -270,6 +275,7 @@ DrawGate <- function(fr, channels, gate_type, N = 1, ...){
   
   return(gates)
 }
+
 
 #' DrawGate plugin for openCyto
 #'
