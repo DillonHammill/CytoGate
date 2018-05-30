@@ -149,10 +149,10 @@ DrawGate <- function(fr, channels, gate_type, N = 1, ...){
     # Extract gate coordinates
     coords <- locator(n=1, type = "o", lwd = 2, pch = 16)
     
-    abline(v = coords[1], lwd = 2, col = "red")
+    abline(v = coords$x, lwd = 2, col = "red")
     
-    pts <- data.frame(x = c(coords[1],Inf))
-    colnames(pts) <- channels
+    pts <- data.frame(x = c(coords$x,Inf))
+    colnames(pts) <- channels[1]
     
     gates <- rectangleGate(.gate = pts)
     
