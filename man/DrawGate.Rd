@@ -4,7 +4,7 @@
 \alias{DrawGate}
 \title{Interactive Gate Drawing for Flow Cytometry Data.}
 \usage{
-DrawGate(fr, channels, gate_type, N = 1, ...)
+DrawGate(fr, channels, gate_type, N = 1, axis = "x", ...)
 }
 \arguments{
 \item{fr}{a \code{flowFrame} object containing the flow cytometry data for plotting and gating.}
@@ -16,6 +16,8 @@ of the kernel density will be constructed.}
 \code{"rectangle"}, \code{"interval"}, \code{"threshold"}, \code{"ellipse"} and \code{"quadrant"}.}
 
 \item{N}{an integer indicating the number of gates to construct.}
+
+\item{axis}{indicates which axis should be gated for \code{gate_type="interval} with 2 fluorescent channel supplied.}
 
 \item{...}{additional arguments for plotDens.}
 }

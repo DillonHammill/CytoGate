@@ -13,6 +13,7 @@
 #' @param gate_type a character string of length 1 indicating the type of gate to be constructed. Supported gates are \code{"polygon"},
 #' \code{"rectangle"}, \code{"interval"}, \code{"threshold"}, \code{"ellipse"} and \code{"quadrant"}.
 #' @param N an integer indicating the number of gates to construct.
+#' @param axis indicates which axis should be gated for \code{gate_type="interval} with 2 fluorescent channel supplied.
 #' @param ... additional arguments for plotDens.
 #'
 #' @return a \code{dataframe} object containing the coordinates required to construct the gate.
@@ -22,7 +23,7 @@
 #' @export
 #'
 #' @author Dillon Hammill (Dillon.Hammill@anu.edu.au)
-DrawGate <- function(fr, channels, gate_type, N = 1, ...){
+DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
   
   # Check that length(channels) %in% c(1,2)
   if(!length(channels) %in% c(1,2) | missing(channels)){
@@ -124,17 +125,40 @@ DrawGate <- function(fr, channels, gate_type, N = 1, ...){
       # Extract gate coordinates
       coords <- locator(n=2, type = "o", lwd = 2, pch = 16, col = "red")
       coords <- data.frame(coords)
-      colnames(coords) <- channels
-      pts[[i]] <- coords
       
-      abline(v = coords[,1], lwd = 2, col = "red")
+      if(length(channels) == 1){
+        colnames(coords) <- c(channels[1],"Density")
+      }else{
+        colnames(coords) <- channels
+      }
+      pts[[i]] <- coords
     }
     
-    gates <- lapply(pts, function(pts){
-      pts <- data.frame(pts)
-      colnames(pts) <- channels
-      rectangleGate(pts)
-    })
+    if(axis == "x"){
+      gates <- lapply(pts, function(pts){
+        
+        if(length(channels) == 1){
+          pts <- data.frame(x = pts[,1])
+          colnames(pts) <- channels[1]
+        }else if(length(channels) == 2){
+          pts <- data.frame(x = pts[,1], y = c(-Inf,Inf))
+          colnames(pts) <- channels
+        }
+        abline(v = pts[,1], lwd = 2, col = "red")
+        
+        rectangleGate(.gate = pts)
+      })
+    }else if(axis == "y"){
+      if(length(channels) == 1) stop("Cannot gate y axis if a single fluorescent channel is provided.")
+      gates <- lapply(pts, function(pts){
+        pts <- data.frame(x = c(-Inf,Inf), y = pts[,2])
+        colnames(pts) <- channels
+        
+        abline(h = pts[,2], lwd = 2, col = "red")
+        
+        rectangleGate(.gate = pts)
+      })
+    }
     
     gates <- filters(gates)
     
@@ -321,22 +345,28 @@ DrawGate <- function(fr, channels, gate_type, N = 1, ...){
 #' ggcyto(gs[[1]], subset = "root", aes(x = "FSC-A",y = "SSC-A")) + geom_hex(bins = 100) + geom_stats()
 #' 
 #' }
-gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, min = NULL, max = NULL, gate_type = c("polygon", "rectangle", "interval", "threshold", "ellipse", "quadrant"), N = 1, ...){
+gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, min = NULL, max = NULL, gate_type = c("polygon", "rectangle", "interval", "threshold", "ellipse", "quadrant"), N = 1, axis = c("x","y"),...){
   
   gate_type <- match.arg(gate_type)
+  
+  if(missing(axis)){
+    axis <- "x"
+  }
+  
+  axis <- match.arg(axis)
   
   # Two fluorescent channels must be supplied
   if(missing(channels) | !length(channels) %in% c(1,2)){
     stop("Two fluorescent channels must be specified to draw polygon gate.")
   }
-
+  
   # Truncate flowFrame if min and max arguments are supplied
   if(!(is.null(min) && is.null(max))){
     fr <- openCyto::.truncate_flowframe(fr, channels = channels, min = min, max = max)
   }
-
+  
   # Determine vertices of polygon using DrawGate
-  gates <- DrawGate(fr, channels, gate_type = gate_type, N = N)
-    
+  gates <- DrawGate(fr, channels, gate_type = gate_type, N = N, axis = axis)
+  
   return(gates)
 }
