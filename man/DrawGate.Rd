@@ -17,7 +17,7 @@ of the kernel density will be constructed.}
 
 \item{N}{an integer indicating the number of gates to construct.}
 
-\item{axis}{indicates which axis should be gated for \code{gate_type="interval} with 2 fluorescent channel supplied.}
+\item{axis}{indicates which axis should be gated for \code{gate_type="interval"} with 2 fluorescent channel supplied.}
 
 \item{...}{additional arguments for plotDens.}
 }

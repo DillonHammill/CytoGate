@@ -13,7 +13,7 @@
 #' @param gate_type a character string of length 1 indicating the type of gate to be constructed. Supported gates are \code{"polygon"},
 #' \code{"rectangle"}, \code{"interval"}, \code{"threshold"}, \code{"ellipse"} and \code{"quadrant"}.
 #' @param N an integer indicating the number of gates to construct.
-#' @param axis indicates which axis should be gated for \code{gate_type="interval} with 2 fluorescent channel supplied.
+#' @param axis indicates which axis should be gated for \code{gate_type="interval"} with 2 fluorescent channel supplied.
 #' @param ... additional arguments for plotDens.
 #'
 #' @return a \code{dataframe} object containing the coordinates required to construct the gate.
@@ -315,6 +315,8 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
 #' \code{c("polygon", "rectangle", "interval", "threshold", "ellipse", "quadrant")}.
 #' @param min argument passed to \code{truncate_flowFrame} to restrict data to values > \code{min}.
 #' @param max argument passed to \code{truncate_flowFrame} to restrict data to values < \code{max}.
+#' @param N an integer indicating the number of gates to construct, set to 1 by default.
+#' @param axis indicates the axis to use for gating for \code{gate_type="interval"} when 2 fluorescent channel are supplied.
 #' @param ... additional arguments passsed to \code{DrawGate}.
 #'
 #' @return a \code{polygonGate} constructed from coordinates supplied by \code{DrawGate}.

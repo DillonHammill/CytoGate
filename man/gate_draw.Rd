@@ -27,6 +27,10 @@ gate_draw(fr, pp_res, channels, filterId = "", gate_range = NULL,
 \item{gate_type}{type of gate to be constructed, supported types include 
 \code{c("polygon", "rectangle", "interval", "threshold", "ellipse", "quadrant")}.}
 
+\item{N}{an integer indicating the number of gates to construct, set to 1 by default.}
+
+\item{axis}{indicates the axis to use for gating for \code{gate_type="interval"} when 2 fluorescent channel are supplied.}
+
 \item{...}{additional arguments passsed to \code{DrawGate}.}
 }
 \value{
