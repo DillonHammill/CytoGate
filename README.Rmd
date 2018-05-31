@@ -27,8 +27,8 @@ listgtMethods()
 
 ## Construct GatingSet
 ```{r, echo = TRUE, message = FALSE}
-data(fs, package = "CytoGate")
-gs <- GatingSet(fs)
+data(OTI, package = "CytoGate")
+gs <- GatingSet(OTI)
 ```
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
@@ -51,8 +51,8 @@ groupBy = 2
 ```{r, eval = FALSE, warning = FALSE, message = FALSE}
 library(ggcyto)
 ggcyto(gs, subset = "root", aes(x = "FSC-A", y = "SSC-A")) + geom_hex(bins = 100) + geom_gate("Lymphocytes") + geom_stats()
-![](CytoGate/README_files/figure-markdown_github-ascii_identifiers/unnamed-chunk-5-1.png)
 ```
+![](DrawGate.png)
 
 Dillon Hammill, BMedSci (Hons)
 <br /> Ph.D. Scholar
