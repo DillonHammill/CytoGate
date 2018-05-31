@@ -51,6 +51,7 @@ groupBy = 2
 ```{r, eval = FALSE, warning = FALSE, message = FALSE}
 library(ggcyto)
 ggcyto(gs, subset = "root", aes(x = "FSC-A", y = "SSC-A")) + geom_hex(bins = 100) + geom_gate("Lymphocytes") + geom_stats()
+![](https://github.com/DillonHammill/CytoGate/tree/master/README_files/figure-markdown_github-ascii_identifiers)
 ```
 
 Dillon Hammill, BMedSci (Hons)
