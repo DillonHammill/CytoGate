@@ -61,6 +61,7 @@ Plot Gating Result
 ``` r
 library(ggcyto)
 ggcyto(gs, subset = "root", aes(x = "FSC-A", y = "SSC-A")) + geom_hex(bins = 100) + geom_gate("Lymphocytes") + geom_stats()
+![](https://github.com/DillonHammill/CytoGate/tree/master/README_files/figure-markdown_github-ascii_identifiers)
 ```
 
 Dillon Hammill, BMedSci (Hons) <br /> Ph.D. Scholar <br /> The Parish Group – Cancer & Vascular Biology <br /> ACRF Department of Cancer Biology and Therapeutics <br /> The John Curtin School of Medical Research <br /> ANU College of Medicine, Biology and the Environment <br /> The Australian National University <br /> Acton ACT 2601 <br /> <Dillon.Hammill@anu.edu.au>
