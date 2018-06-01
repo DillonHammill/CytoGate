@@ -68,24 +68,30 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
     
     if(length(channels) != 2) stop("Two fluorescent channels are required to construct polygonGate.")
     
-    # Construct polygon gate 
-    
-    cat("Select at least 3 points to construct a polygon gate around the population. \n")
-    
-    if(N > 1){
-      message("Multiple polygon gates are not supported - a single polygon gate will be returned")
+    # Co-ordinates of gate(s)
+    pts <- list()
+    for(i in 1:N){
+      
+      cat("Select at least 3 points to construct a polygon gate around the population. \n")
+      
+      # Extract gate coordinates
+      coords <- locator(type = "o", lwd = 2, pch = 16)
+      
+      if (length(coords$x) < 3) stop("A minimum of 3 points is required to construct a polygon gate.")
+      lines(x = coords$x[c(1, length(coords$x))], y = coords$y[c(1, length(coords$x))], lwd = 2)
+      
+      coords <- as.data.frame(coords)
+      colnames(coords) <- channels
+      pts[[i]] <- coords
     }
     
-    # Extract gate coordinates
-    pts <- locator(type = "o", lwd = 2, pch = 16)
+    gates <- lapply(pts, function(pts){
+      pts <- data.frame(pts)
+      colnames(pts) <- channels
+      polygonGate(.gate = pts)
+    })
     
-    if (length(pts$x) < 3) stop("A minimum of 3 points is required to construct a polygon gate.")
-    lines(x = pts$x[c(1, length(pts$x))], y = pts$y[c(1, length(pts$x))], lwd = 2)
-    
-    pts <- as.data.frame(pts)
-    colnames(pts) <- channels
-    
-    gates <- polygonGate(.gate = pts)
+    gates <- filters(gates)
     
   }else if(gate_type == "rectangle"){
     
