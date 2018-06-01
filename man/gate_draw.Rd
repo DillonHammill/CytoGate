@@ -7,7 +7,7 @@
 gate_draw(fr, pp_res, channels, filterId = "", gate_range = NULL,
   min = NULL, max = NULL, gate_type = c("polygon", "rectangle",
   "interval", "threshold", "ellipse", "quadrant"), N = 1, axis = c("x",
-  "y"), ...)
+  "y"), adjust = 1.5, ...)
 }
 \arguments{
 \item{fr}{a \code{flowFrame} object containing the flow cytometry data for gating.}

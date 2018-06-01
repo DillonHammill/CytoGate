@@ -4,7 +4,7 @@
 \alias{DrawGate}
 \title{Interactive Gate Drawing for Flow Cytometry Data.}
 \usage{
-DrawGate(fr, channels, gate_type, N = 1, axis = "x", ...)
+DrawGate(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5, ...)
 }
 \arguments{
 \item{fr}{a \code{flowFrame} object containing the flow cytometry data for plotting and gating.}

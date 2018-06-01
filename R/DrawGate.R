@@ -14,6 +14,7 @@
 #' \code{"rectangle"}, \code{"interval"}, \code{"threshold"}, \code{"ellipse"} and \code{"quadrant"}.
 #' @param N an integer indicating the number of gates to construct.
 #' @param axis indicates which axis should be gated for \code{gate_type="interval"} with 2 fluorescent channel supplied.
+#' @param adjust numeric smoothing factor used for 1D density plots.
 #' @param ... additional arguments for plotDens.
 #'
 #' @return a \code{dataframe} object containing the coordinates required to construct the gate.
@@ -23,7 +24,7 @@
 #' @export
 #'
 #' @author Dillon Hammill (Dillon.Hammill@anu.edu.au)
-DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
+DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,...){
   
   # Check that length(channels) %in% c(1,2)
   if(!length(channels) %in% c(1,2) | missing(channels)){
@@ -53,7 +54,7 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
   if(length(channels) == 1){
     
     # Density Plot
-    d <- density(exprs(fr)[,channels])
+    d <- density(exprs(fr)[,channels], adjust = adjust)
     plot(d, main=paste(channels))
     polygon(d, col="blue", border="black")
     
@@ -323,6 +324,7 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
 #' @param max argument passed to \code{truncate_flowFrame} to restrict data to values < \code{max}.
 #' @param N an integer indicating the number of gates to construct, set to 1 by default.
 #' @param axis indicates the axis to use for gating for \code{gate_type="interval"} when 2 fluorescent channel are supplied.
+#' @param adjust numeric smoothing factor used for 1D density plots.
 #' @param ... additional arguments passsed to \code{DrawGate}.
 #'
 #' @return a \code{polygonGate} constructed from coordinates supplied by \code{DrawGate}.
@@ -353,7 +355,7 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
 #' ggcyto(gs[[1]], subset = "root", aes(x = "FSC-A",y = "SSC-A")) + geom_hex(bins = 100) + geom_stats()
 #' 
 #' }
-gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, min = NULL, max = NULL, gate_type = c("polygon", "rectangle", "interval", "threshold", "ellipse", "quadrant"), N = 1, axis = c("x","y"),...){
+gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, min = NULL, max = NULL, gate_type = c("polygon", "rectangle", "interval", "threshold", "ellipse", "quadrant"), N = 1, axis = c("x","y"), adjust = 1.5,...){
   
   gate_type <- match.arg(gate_type)
   
@@ -374,7 +376,7 @@ gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, mi
   }
   
   # Determine vertices of polygon using DrawGate
-  gates <- DrawGate(fr, channels, gate_type = gate_type, N = N, axis = axis)
+  gates <- DrawGate(fr, channels, gate_type = gate_type, N = N, axis = axis, adjust = adjust)
   
   return(gates)
 }
