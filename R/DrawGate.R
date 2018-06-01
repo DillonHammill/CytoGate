@@ -143,7 +143,7 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
       if(axis == "x"){
         abline(v = coords[,1], lwd = 2, col = "red")
       }else if(axis == "y"){
-        abline(h = pts[,2], lwd = 2, col = "red")
+        abline(h = coords[,2], lwd = 2, col = "red")
       }
       
     }
