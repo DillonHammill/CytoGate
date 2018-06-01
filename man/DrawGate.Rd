@@ -19,6 +19,8 @@ of the kernel density will be constructed.}
 
 \item{axis}{indicates which axis should be gated for \code{gate_type="interval"} with 2 fluorescent channel supplied.}
 
+\item{adjust}{numeric smoothing factor used for 1D density plots.}
+
 \item{...}{additional arguments for plotDens.}
 }
 \value{

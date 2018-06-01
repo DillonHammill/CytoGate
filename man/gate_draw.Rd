@@ -31,6 +31,8 @@ gate_draw(fr, pp_res, channels, filterId = "", gate_range = NULL,
 
 \item{axis}{indicates the axis to use for gating for \code{gate_type="interval"} when 2 fluorescent channel are supplied.}
 
+\item{adjust}{numeric smoothing factor used for 1D density plots.}
+
 \item{...}{additional arguments passsed to \code{DrawGate}.}
 }
 \value{

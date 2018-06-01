@@ -139,6 +139,13 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
         colnames(coords) <- channels
       }
       pts[[i]] <- coords
+      
+      if(axis == "x"){
+        abline(v = coords[,1], lwd = 2, col = "red")
+      }else if(axis == "y"){
+        abline(h = pts[,2], lwd = 2, col = "red")
+      }
+      
     }
     
     if(axis == "x"){
@@ -151,7 +158,6 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
           pts <- data.frame(x = pts[,1], y = c(-Inf,Inf))
           colnames(pts) <- channels
         }
-        abline(v = pts[,1], lwd = 2, col = "red")
         
         rectangleGate(.gate = pts)
       })
@@ -160,8 +166,6 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
       gates <- lapply(pts, function(pts){
         pts <- data.frame(x = c(-Inf,Inf), y = pts[,2])
         colnames(pts) <- channels
-        
-        abline(h = pts[,2], lwd = 2, col = "red")
         
         rectangleGate(.gate = pts)
       })
