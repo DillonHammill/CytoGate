@@ -1,7 +1,7 @@
-#' OTI
+#' Activation
 #'
-#' A flowSet containg two flowFrames from tryping of OT-I and OT-II transgenic T cells.
+#' A flowSet containg two flowFrames to assess activation of OT-I and OT-II transgenic T cells.
 #'
 #' @format A flowSet containing two flowFrame objects:
 #'
-"OTI"
+"Activation"
