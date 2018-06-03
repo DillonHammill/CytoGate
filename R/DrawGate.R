@@ -76,10 +76,10 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
       cat("Select at least 3 points to construct a polygon gate around the population. \n")
       
       # Extract gate coordinates
-      coords <- locator(type = "o", lwd = 2, pch = 16)
+      coords <- locator(type = "o", lwd = 2, pch = 16, col = "red")
       
       if (length(coords$x) < 3) stop("A minimum of 3 points is required to construct a polygon gate.")
-      lines(x = coords$x[c(1, length(coords$x))], y = coords$y[c(1, length(coords$x))], lwd = 2)
+      lines(x = coords$x[c(1, length(coords$x))], y = coords$y[c(1, length(coords$x))], lwd = 2, col = "red")
       
       coords <- as.data.frame(coords)
       colnames(coords) <- channels
@@ -218,7 +218,6 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
       
       # Find center of the major axis
       center <- c((sum(mj.pts$x)/nrow(mj.pts)), (sum(mj.pts$y)/nrow(mj.pts)))
-      points(x = center[1], y = center[2], col = "red", pch = 16)
       
       # Find major point which lies above center
       max.pt <- mj.pts[mj.pts$y > center[2] ,]
