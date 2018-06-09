@@ -383,3 +383,27 @@ gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, mi
   
   return(gates)
 }
+registerPlugins(gate_draw, "DrawGate")
+
+#' Gating plugin for openCyto using saved gates
+#'
+#' \code{DrawGate} allows the user to draw gates directly onto plots of flow cytometry data.This plugin provides
+#' a way of passing saved gates to \code{openCyto}.
+#'
+#' @param fr a \code{flowFrame} object containing the flow cytometry data for gating.
+#' @param pp_res output of preprocessing function.
+#' @param channels fluorescent channel(s) to use for gating.
+#' @param gate stored \code{DrawGate} gate in csv file for passing to openCyto.
+#'
+#' @return pass saved gate to openCyto to apply to all samples.
+#'
+#' @keywords manual, gating, polygon, polygonGate
+#' @import flowDensity openCyto
+#' @export
+#'
+#' @author Dillon Hammill (Dillon.Hammill@anu.edu.au)
+gate_manual <- function(fr, pp_res, channels, gate){
+  
+  return(gate)
+}
+registerPlugins(gate_manual, "gate_manual")
