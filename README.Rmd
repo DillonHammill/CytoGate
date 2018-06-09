@@ -27,8 +27,8 @@ listgtMethods()
 
 ## Construct GatingSet
 ```{r, echo = TRUE, message = FALSE}
-data(OTI, package = "CytoGate")
-gs <- GatingSet(OTI)
+data(Activation, package = "CytoGate")
+gs <- GatingSet(Activation)
 ```
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
