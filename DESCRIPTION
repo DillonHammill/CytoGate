@@ -1,12 +1,12 @@
 Package: CytoGate
 Type: Package
 Title: openCyto Plugin Gating Functions
-Version: 1.1.0
+Version: 1.1.1
 Author: Dillon Hammill <Dillon.Hammill@anu.edu.au>
 Maintainer: Dillon Hammill <Dillon.Hammill@anu.edu.au>
 Description: openCyto plugin for drawing polygonGates onto flow cytometry plots.
-Depends: flowDensity (>= 1.12.0), DescTools (>= 0.99.21)
-Imports: flowDensity (>= 1.12.0), DescTools (>= 0.99.21)
+Depends: flowDensity (>= 1.12.0), DescTools (>= 0.99.21), openCyto(>= 1.19.1)
+Imports: flowDensity (>= 1.12.0), DescTools (>= 0.99.21), openCyto(>= 1.19.1)
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
