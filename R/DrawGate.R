@@ -14,6 +14,7 @@
 #' \code{"rectangle"}, \code{"interval"}, \code{"threshold"}, \code{"ellipse"} and \code{"quadrant"}.
 #' @param N an integer indicating the number of gates to construct.
 #' @param axis indicates which axis should be gated for \code{gate_type="interval"} with 2 fluorescent channel supplied.
+#' @param adjust numeric smoothing factor used for 1D density plots.
 #' @param ... additional arguments for plotDens.
 #'
 #' @return a \code{dataframe} object containing the coordinates required to construct the gate.
@@ -23,7 +24,7 @@
 #' @export
 #'
 #' @author Dillon Hammill (Dillon.Hammill@anu.edu.au)
-DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
+DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,...){
   
   # Check that length(channels) %in% c(1,2)
   if(!length(channels) %in% c(1,2) | missing(channels)){
@@ -53,7 +54,7 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
   if(length(channels) == 1){
     
     # Density Plot
-    d <- density(exprs(fr)[,channels])
+    d <- density(exprs(fr)[,channels], adjust = adjust)
     plot(d, main=paste(channels))
     polygon(d, col="blue", border="black")
     
@@ -68,24 +69,30 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
     
     if(length(channels) != 2) stop("Two fluorescent channels are required to construct polygonGate.")
     
-    # Construct polygon gate 
-    
-    cat("Select at least 3 points to construct a polygon gate around the population. \n")
-    
-    if(N > 1){
-      message("Multiple polygon gates are not supported - a single polygon gate will be returned")
+    # Co-ordinates of gate(s)
+    pts <- list()
+    for(i in 1:N){
+      
+      cat("Select at least 3 points to construct a polygon gate around the population. \n")
+      
+      # Extract gate coordinates
+      coords <- locator(type = "o", lwd = 2, pch = 16, col = "red")
+      
+      if (length(coords$x) < 3) stop("A minimum of 3 points is required to construct a polygon gate.")
+      lines(x = coords$x[c(1, length(coords$x))], y = coords$y[c(1, length(coords$x))], lwd = 2, col = "red")
+      
+      coords <- as.data.frame(coords)
+      colnames(coords) <- channels
+      pts[[i]] <- coords
     }
     
-    # Extract gate coordinates
-    pts <- locator(type = "o", lwd = 2, pch = 16)
+    gates <- lapply(pts, function(pts){
+      pts <- data.frame(pts)
+      colnames(pts) <- channels
+      polygonGate(.gate = pts)
+    })
     
-    if (length(pts$x) < 3) stop("A minimum of 3 points is required to construct a polygon gate.")
-    lines(x = pts$x[c(1, length(pts$x))], y = pts$y[c(1, length(pts$x))], lwd = 2)
-    
-    pts <- as.data.frame(pts)
-    colnames(pts) <- channels
-    
-    gates <- polygonGate(.gate = pts)
+    gates <- filters(gates)
     
   }else if(gate_type == "rectangle"){
     
@@ -132,6 +139,13 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
         colnames(coords) <- channels
       }
       pts[[i]] <- coords
+      
+      if(axis == "x"){
+        abline(v = coords[,1], lwd = 2, col = "red")
+      }else if(axis == "y"){
+        abline(h = coords[,2], lwd = 2, col = "red")
+      }
+      
     }
     
     if(axis == "x"){
@@ -144,7 +158,6 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
           pts <- data.frame(x = pts[,1], y = c(-Inf,Inf))
           colnames(pts) <- channels
         }
-        abline(v = pts[,1], lwd = 2, col = "red")
         
         rectangleGate(.gate = pts)
       })
@@ -153,8 +166,6 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
       gates <- lapply(pts, function(pts){
         pts <- data.frame(x = c(-Inf,Inf), y = pts[,2])
         colnames(pts) <- channels
-        
-        abline(h = pts[,2], lwd = 2, col = "red")
         
         rectangleGate(.gate = pts)
       })
@@ -207,7 +218,6 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
       
       # Find center of the major axis
       center <- c((sum(mj.pts$x)/nrow(mj.pts)), (sum(mj.pts$y)/nrow(mj.pts)))
-      points(x = center[1], y = center[2], col = "red", pch = 16)
       
       # Find major point which lies above center
       max.pt <- mj.pts[mj.pts$y > center[2] ,]
@@ -317,6 +327,7 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
 #' @param max argument passed to \code{truncate_flowFrame} to restrict data to values < \code{max}.
 #' @param N an integer indicating the number of gates to construct, set to 1 by default.
 #' @param axis indicates the axis to use for gating for \code{gate_type="interval"} when 2 fluorescent channel are supplied.
+#' @param adjust numeric smoothing factor used for 1D density plots.
 #' @param ... additional arguments passsed to \code{DrawGate}.
 #'
 #' @return a \code{polygonGate} constructed from coordinates supplied by \code{DrawGate}.
@@ -347,7 +358,7 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", ...){
 #' ggcyto(gs[[1]], subset = "root", aes(x = "FSC-A",y = "SSC-A")) + geom_hex(bins = 100) + geom_stats()
 #' 
 #' }
-gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, min = NULL, max = NULL, gate_type = c("polygon", "rectangle", "interval", "threshold", "ellipse", "quadrant"), N = 1, axis = c("x","y"),...){
+gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, min = NULL, max = NULL, gate_type = c("polygon", "rectangle", "interval", "threshold", "ellipse", "quadrant"), N = 1, axis = c("x","y"), adjust = 1.5,...){
   
   gate_type <- match.arg(gate_type)
   
@@ -368,7 +379,31 @@ gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, mi
   }
   
   # Determine vertices of polygon using DrawGate
-  gates <- DrawGate(fr, channels, gate_type = gate_type, N = N, axis = axis)
+  gates <- DrawGate(fr, channels, gate_type = gate_type, N = N, axis = axis, adjust = adjust)
   
   return(gates)
 }
+registerPlugins(gate_draw, "DrawGate")
+
+#' Gating plugin for openCyto using saved gates
+#'
+#' \code{DrawGate} allows the user to draw gates directly onto plots of flow cytometry data.This plugin provides
+#' a way of passing saved gates to \code{openCyto}.
+#'
+#' @param fr a \code{flowFrame} object containing the flow cytometry data for gating.
+#' @param pp_res output of preprocessing function.
+#' @param channels fluorescent channel(s) to use for gating.
+#' @param gate stored \code{DrawGate} gate in csv file for passing to openCyto.
+#'
+#' @return pass saved gate to openCyto to apply to all samples.
+#'
+#' @keywords manual, gating, polygon, polygonGate
+#' @import flowDensity openCyto
+#' @export
+#'
+#' @author Dillon Hammill (Dillon.Hammill@anu.edu.au)
+gate_manual <- function(fr, pp_res, channels, gate){
+  
+  return(gate)
+}
+registerPlugins(gate_manual, "gate_manual")

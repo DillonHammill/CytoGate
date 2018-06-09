@@ -7,7 +7,7 @@
 gate_draw(fr, pp_res, channels, filterId = "", gate_range = NULL,
   min = NULL, max = NULL, gate_type = c("polygon", "rectangle",
   "interval", "threshold", "ellipse", "quadrant"), N = 1, axis = c("x",
-  "y"), ...)
+  "y"), adjust = 1.5, ...)
 }
 \arguments{
 \item{fr}{a \code{flowFrame} object containing the flow cytometry data for gating.}
@@ -30,6 +30,8 @@ gate_draw(fr, pp_res, channels, filterId = "", gate_range = NULL,
 \item{N}{an integer indicating the number of gates to construct, set to 1 by default.}
 
 \item{axis}{indicates the axis to use for gating for \code{gate_type="interval"} when 2 fluorescent channel are supplied.}
+
+\item{adjust}{numeric smoothing factor used for 1D density plots.}
 
 \item{...}{additional arguments passsed to \code{DrawGate}.}
 }

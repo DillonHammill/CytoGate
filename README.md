@@ -1,28 +1,24 @@
-CytoGate
-========
 
-Plugin Gating Functions for openCyto
+\#CytoGate Plugin Gating Functions for openCyto
 
-Installation
-============
+# Installation
 
 **CytoGate** can be installed from Github
 
-GitHub
-------
+## GitHub
 
 ``` r
 library(devtools)
 install_github("DillonHammill/CytoGate")
 ```
 
-Plugin Example
-==============
+# Plugin Example
 
-To demonstrate the use of **CytoGate** the following example uses the **gate\_draw** plugin for openCyto to draw polygonGates manually using the mouse.
+To demonstrate the use of **CytoGate** the following example uses the
+**gate\_draw** plugin for openCyto to draw polygonGates manually using
+the mouse.
 
-Register openCyto Plugin
-------------------------
+## Register openCyto Plugin
 
 ``` r
 library(openCyto)
@@ -32,16 +28,14 @@ registerPlugins(fun = gate_draw, methodName = "DrawGate")
 listgtMethods()
 ```
 
-Construct GatingSet
--------------------
+## Construct GatingSet
 
 ``` r
-data(fs, package = "CytoGate")
-gs <- GatingSet(fs)
+data(Activation, package = "CytoGate")
+gs <- GatingSet(Activation)
 ```
 
-Construct GatingTemplate Entry
-------------------------------
+## Construct GatingTemplate Entry
 
 ``` r
 library(flowDensity)
@@ -53,14 +47,20 @@ groupBy = 2
 )
 ```
 
-    ## Draw 2D polygon gate around population.
+    ## Select at least 3 points to construct a polygon gate around the population.
 
-Plot Gating Result
-------------------
+## Plot Gating Result
 
 ``` r
 library(ggcyto)
 ggcyto(gs, subset = "root", aes(x = "FSC-A", y = "SSC-A")) + geom_hex(bins = 100) + geom_gate("Lymphocytes") + geom_stats()
 ```
 
-Dillon Hammill, BMedSci (Hons) <br /> Ph.D. Scholar <br /> The Parish Group – Cancer & Vascular Biology <br /> ACRF Department of Cancer Biology and Therapeutics <br /> The John Curtin School of Medical Research <br /> ANU College of Medicine, Biology and the Environment <br /> The Australian National University <br /> Acton ACT 2601 <br /> <Dillon.Hammill@anu.edu.au>
+![](DrawGate.png)
+
+Dillon Hammill, BMedSci (Hons) <br /> Ph.D. Scholar <br /> The Parish
+Group – Cancer & Vascular Biology <br /> ACRF Department of Cancer
+Biology and Therapeutics <br /> The John Curtin School of Medical
+Research <br /> ANU College of Medicine, Biology and the Environment
+<br /> The Australian National University <br /> Acton ACT 2601 <br />
+<Dillon.Hammill@anu.edu.au>

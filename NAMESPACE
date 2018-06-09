@@ -2,5 +2,6 @@
 
 export(DrawGate)
 export(gate_draw)
+export(gate_manual)
 import(flowDensity)
 import(openCyto)
