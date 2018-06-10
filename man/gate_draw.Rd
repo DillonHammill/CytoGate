@@ -5,9 +5,11 @@
 \title{DrawGate plugin for openCyto}
 \usage{
 gate_draw(fr, pp_res, channels, filterId = "", gate_range = NULL,
-  min = NULL, max = NULL, gate_type = c("polygon", "rectangle",
-  "interval", "threshold", "ellipse", "quadrant"), N = 1, axis = c("x",
-  "y"), adjust = 1.5, ...)
+  min = NULL, max = NULL, gate_type = c("polygon", "Polygon", "p", "P",
+  "rectangle", "Rectangle", "r", "R", "interval", "Interval", "i", "I",
+  "threshold", "Threshold", "t", "T", "boundary", "Boundary", "b", "B",
+  "ellipse", "Ellipse", "e", "E", "quadrant", "Quadrant", "q", "Q"), N = 1,
+  axis = c("x", "y"), adjust = 1.5, ...)
 }
 \arguments{
 \item{fr}{a \code{flowFrame} object containing the flow cytometry data for gating.}
