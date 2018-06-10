@@ -43,9 +43,9 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
     message("No gate type supplied - gate type set to polygon.")
     gate_type <- "polygon"
     
-  }else if(length(gate_type) == 1 & !gate_type %in% c("polygon","rectangle", "interval", "threshold", "ellipse", "quadrant")){
+  }else if(length(gate_type) == 1 & !gate_type %in% c("polygon", "Polygon", "p", "P","rectangle", "Rectangle", "r", "R","interval", "Interval", "i", "I","threshold", "Threshold", "t", "T", "boundary", "Boundary", "b", "B","ellipse", "Ellipse", "e", "E","quadrant", "Quadrant", "q", "Q")){
     
-    message("Invalid gate type supplied - gate type set to polygon. Supported gate types include polygon, rectangle, interval, threshold and quadrant")
+    message("Invalid gate type supplied - gate type set to polygon. Supported gate types include polygon, rectangle, interval, threshold, boundary, ellipse and quadrant")
     gate_type <- "polygon"
     
   }
@@ -65,7 +65,7 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
   }
   
   
-  if(gate_type == "polygon"){
+  if(gate_type %in% c("polygon", "Polygon", "p", "P")){
     
     if(length(channels) != 2) stop("Two fluorescent channels are required to construct polygonGate.")
     
@@ -94,7 +94,7 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
     
     gates <- filters(gates)
     
-  }else if(gate_type == "rectangle"){
+  }else if(gate_type %in% c("rectangle", "Rectangle", "r", "R")){
     
     if(length(channels) != 2) stop("Two fluorescent channels are required to construct rectangleGate.")
     
@@ -121,7 +121,7 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
     
     gates <- filters(gates)
     
-  }else if(gate_type == "interval"){
+  }else if(gate_type %in% c("interval", "Interval", "i", "I")){
     
     # Coordinates of gates(s)
     pts <- list()
@@ -173,16 +173,16 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
     
     gates <- filters(gates)
     
-  }else if(gate_type == "threshold"){
+  }else if(gate_type %in% c("threshold", "Threshold", "t", "T")){
     
     cat("Select 1 point indicating the lower bound of the threshold gate. \n")
     
     if(N > 1){
-      message("Multiple threhold gates are not supported - a single threshold will be returned")
+      message("Multiple threhold gates are not supported - a single threshold gate will be returned")
     }
     
     # Extract gate coordinates
-    coords <- locator(n=1, type = "o", lwd = 2, pch = 16, col = "red")
+    coords <- locator(n=1, type = "p", lwd = 2, pch = 16, col = "red")
     
     if(length(channels) == 1){
       pts <- data.frame(x = c(coords$x,Inf))
@@ -195,8 +195,32 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
     }
     
     gates <- rectangleGate(.gate = pts)
+  
+  }else if(gate_type %in% c("boundary", "Boundary", "b", "B")){  
     
-  }else if(gate_type == "ellipse"){
+    cat("Select 1 point indicating the upper bound of the boundary gate. \n")
+    
+    if(N > 1){
+      message("Multiple boundary gates are not supported - a single boundary gate will be returned")
+    }
+    
+    # Extract gate coordinates
+    coords <- locator(n=1, type = "p", lwd = 2, pch = 16, col = "red")
+    
+    if(length(channels) == 1){
+      pts <- data.frame(x = c(-Inf,coords$x))
+      colnames(pts) <- channels[1]
+      abline(v = coords$x, lwd = 2, col = "red")
+    }else if(length(channels) == 2){
+      pts <- data.frame(x = c(-Inf,coords$x), y = c(-Inf,coords$y))
+      colnames(pts) <- channels
+      rect(xleft = min(exprs(fr)[,channels[1]]), ybottom = min(exprs(fr)[,channels[2]]), xright = max(coords$x), ytop = max(coords$y), border = "red", lwd = 2)
+    }
+    
+    gates <- rectangleGate(.gate = pts)
+    
+      
+  }else if(gate_type %in% c("ellipse", "Ellipse", "e", "E")){
     
     if(length(channels) != 2) stop("Two fluorescent channels are required to construct ellipsoidGate.")
     
@@ -260,7 +284,7 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
     
     gates <- filters(gates)
     
-  }else if(gate_type == "quadrant"){
+  }else if(gate_type %in% c("quadrant", "Quadrant", "q", "Q")){
     
     if(length(channels) != 2) stop("Two fluorescent channels are required to construct quadrant gates.")
     
@@ -358,7 +382,7 @@ DrawGate <- function(fr, channels, gate_type, N = 1, axis = "x", adjust = 1.5,..
 #' ggcyto(gs[[1]], subset = "root", aes(x = "FSC-A",y = "SSC-A")) + geom_hex(bins = 100) + geom_stats()
 #' 
 #' }
-gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, min = NULL, max = NULL, gate_type = c("polygon", "rectangle", "interval", "threshold", "ellipse", "quadrant"), N = 1, axis = c("x","y"), adjust = 1.5,...){
+gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, min = NULL, max = NULL, gate_type = c("polygon", "Polygon", "p", "P","rectangle", "Rectangle", "r", "R","interval", "Interval", "i", "I","threshold", "Threshold", "t", "T", "boundary", "Boundary", "b", "B","ellipse", "Ellipse", "e", "E","quadrant", "Quadrant", "q", "Q"), N = 1, axis = c("x","y"), adjust = 1.5,...){
   
   gate_type <- match.arg(gate_type)
   
