@@ -407,7 +407,7 @@ gate_draw <- function(fr, pp_res, channels, filterId = "", gate_range = NULL, mi
   
   return(gates)
 }
-registerPlugins(gate_draw, "DrawGate")
+registerPlugins(gate_draw, "drawGate")
 
 #' Gating plugin for openCyto using saved gates
 #'
@@ -430,4 +430,4 @@ gate_manual <- function(fr, pp_res, channels, gate){
   
   return(gate)
 }
-registerPlugins(gate_manual, "gate_manual")
+registerPlugins(gate_manual, "manualGate")

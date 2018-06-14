@@ -48,7 +48,7 @@ drawPolygon <- function(fr, channels, alias = NULL, subSample = NULL, plot = TRU
     coords <- as.data.frame(coords)
     colnames(coords) <- channels
     
-    gate <- flowCore::polygonGate(.gate = coords)
+    gate <- flowCore::polygonGate(.gate = coords, filterId = alias)
     
     if(labs == TRUE){
       
@@ -113,7 +113,7 @@ drawRectangle <- function(fr, channels, alias = NULL, subSample = NULL, plot = T
     
     rect(xleft = min(coords[,1]), ybottom = min(coords[,2]), xright = max(coords[,1]), ytop = max(coords[,2]), border = "red", lwd = 2)
   
-    gate <- flowCore::rectangleGate(.gate = coords)
+    gate <- flowCore::rectangleGate(.gate = coords, filterId = alias)
     
     if(labs == TRUE){
       
@@ -196,7 +196,7 @@ drawInterval <- function(fr, channels, alias = NULL, subSample = NULL, plot = TR
       coords <- data.frame(x = coords[,1], y = c(-Inf,Inf))
       colnames(coords) <- channels
     }
-      gate <- rectangleGate(.gate = coords)
+      gate <- rectangleGate(.gate = coords, filterId = alias)
       
       if(labs == TRUE){
       plotLabels(fr = fr, alias = alias, gate = gate)
@@ -207,7 +207,7 @@ drawInterval <- function(fr, channels, alias = NULL, subSample = NULL, plot = TR
       coords <- data.frame(x = c(-Inf,Inf), y = coords[,2])
       colnames(coords) <- channels
         
-      gate <- rectangleGate(.gate = coords)
+      gate <- rectangleGate(.gate = coords, filterId = alias)
       
       if(labs == TRUE){
       plotLabels(fr = fr, alias = alias, gate = gate)
@@ -280,7 +280,7 @@ drawThreshold <- function(fr, channels, alias = NULL, subSample = NULL, plot = T
     rect(xleft = min(coords$x), ybottom = min(coords$y), xright = max(exprs(fr)[,channels[1]]), ytop = max(exprs(fr)[, channels[2]]), border = "red", lwd = 2)
   }
   
-  gate <- rectangleGate(.gate = pts)
+  gate <- rectangleGate(.gate = pts, filterId = alias)
   
   if(labs == TRUE){
   plotLabels(fr = fr, alias = alias, gate = gate)
@@ -347,7 +347,7 @@ drawBoundary <- function(fr, channels, alias = NULL, subSample = NULL, plot = TR
     rect(xleft = min(exprs(fr)[,channels[1]]), ybottom = min(exprs(fr)[,channels[2]]), xright = max(coords$x), ytop = max(coords$y), border = "red", lwd = 2)
   }
   
-  gate <- rectangleGate(.gate = pts)
+  gate <- rectangleGate(.gate = pts, filterId = alias)
   
   if(labs == TRUE){
   plotLabels(fr = fr, alias = alias, gate = gate)
@@ -447,7 +447,7 @@ drawEllipse <- function(fr, channels, alias = NULL, subSample = NULL, plot = TRU
     
     DescTools::DrawEllipse(x = center[1], y = center[2], radius.x = a, radius.y = b, rot = angle, border = "red", lwd = 2)
     
-    gate <- ellipsoidGate(.gate = cvm, mean = center)
+    gate <- ellipsoidGate(.gate = cvm, mean = center, filterId = alias)
     
     if(labs == TRUE){
     plotLabels(fr = fr, alias = alias, gate = gate)
@@ -518,7 +518,7 @@ drawQuadrants <- function(fr, channels, alias = NULL, subSample = NULL, plot = T
   # Q1 <- Bottom Left
   q1.gate <- data.frame(x = c(-Inf,pts[1,1]), y = c(-Inf, pts[1,2]))
   colnames(q1.gate) <- channels
-  q1 <- rectangleGate(.gate = q1.gate)
+  q1 <- rectangleGate(.gate = q1.gate, filterId = alias[1])
   
   if(labs == TRUE){
   plotLabels(fr = fr, alias = alias[1], channels = channels, gate = q1)
@@ -527,7 +527,7 @@ drawQuadrants <- function(fr, channels, alias = NULL, subSample = NULL, plot = T
   # Q2 <- Bottom Right
   q2.gate <- data.frame(x = c(pts[1,1], Inf), y = c(-Inf, pts[1,2]))
   colnames(q2.gate) <- channels
-  q2 <- rectangleGate(.gate = q2.gate)
+  q2 <- rectangleGate(.gate = q2.gate, filterId = alias[2])
   
   if(labs == TRUE){
   plotLabels(fr = fr, alias = alias[2], channels = channels, gate = q2)
@@ -536,7 +536,7 @@ drawQuadrants <- function(fr, channels, alias = NULL, subSample = NULL, plot = T
   # Q3 <- Top Right
   q3.gate <- data.frame(x = c(pts[1,1], Inf), y = c(pts[1,2], Inf))
   colnames(q3.gate) <- channels
-  q3 <- rectangleGate(.gate = q3.gate)
+  q3 <- rectangleGate(.gate = q3.gate, filterId = alias[3])
   
   if(labs == TRUE){
   plotLabels(fr = fr, alias = alias[3], channels = channels, gate = q3)
@@ -545,7 +545,7 @@ drawQuadrants <- function(fr, channels, alias = NULL, subSample = NULL, plot = T
   # Q4 <- Top Left
   q4.gate <- data.frame(x = c(-Inf, pts[1,1]), y = c(pts[1,2], Inf))
   colnames(q4.gate) <- channels
-  q4 <- rectangleGate(.gate = q4.gate)
+  q4 <- rectangleGate(.gate = q4.gate, filterId = alias[4])
   
   if(labs == TRUE){
   plotLabels(fr = fr, alias = alias[4], channels = channels, gate = q4)
